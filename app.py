@@ -8,11 +8,26 @@ from flask_restful import Resource, Api
 app = Flask(__name__)
 api = Api(app)         # define our api
 
+Patients = []
+
 
 class Patient(Resource):   # define the resource
     """docstring for Patient.Resource."""
     def get(self, name):        # define method on the resource i.e get
-        return {'patient': name}  # define the result when api is called
+        for patient in Patients:
+            if patient['name'] == name:
+                return patient
+
+
+    def post(self, name):
+        patient = {
+                    'name': name,
+                    'sex': 'male',
+                    'age': 54,
+                    'race': 'black'
+                    }
+        Patients.append(patient)
+        return patient  # no need to jsonify 'cos flask_restful does that for us
 
 
 # this add the resource to our api and
