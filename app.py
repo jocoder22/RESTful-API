@@ -1,20 +1,22 @@
 """This is the Python app in Virtual Environment."""
 
 
-from flask import flask
+from flask import Flask
 from flask_restful import Resource, Api
 
 
 app = Flask(__name__)
-api = Api(app)
+api = Api(app)         # define our api
 
 
-class Patient(Resource):
+class Patient(Resource):   # define the resource
     """docstring for Patient.Resource."""
-    def get(self, name):
-        return {'patient': name}
+    def get(self, name):        # define method on the resource i.e get
+        return {'patient': name}  # define the result when api is called
 
 
+# this add the resource to our api and
+# define how to access the resource on our api
 # to get info we use add_resource method below
 # just like calling: http://127.0.0.1:5000/patient/Peter
 # without the use of @app.route decorator
