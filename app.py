@@ -16,8 +16,8 @@ class Patient(Resource):   # define the resource
     def get(self, name):        # define method on the resource i.e get
         for patient in Patients:
             if patient['name'] == name:
-                return patient
-
+                return patient, 200
+        return {'patient': None}, 404  # define the result when api is called
 
     def post(self, name):
         patient = {
@@ -27,7 +27,7 @@ class Patient(Resource):   # define the resource
                     'race': 'black'
                     }
         Patients.append(patient)
-        return patient  # no need to jsonify 'cos flask_restful does that for us
+        return patient, 201  # no need to jsonify 'cos flask_restful does that for us
 
 
 # this add the resource to our api and
