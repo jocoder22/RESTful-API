@@ -9,12 +9,32 @@ app = Flask(__name__)
 
 Patients = [
     {
-        'name': 'name',
+        'name': 'James',
         'Biodata':[
             {
             'sex': 'male',
-            'age': 54,
+            'age': 44,
             'race': 'black'
+            }
+        ]
+    },
+    {
+        'name': 'John',
+        'Biodata':[
+            {
+            'sex': 'male',
+            'age': 30,
+            'race': 'White'
+            }
+        ]
+    },
+    {
+        'name': 'Jane',
+        'Biodata':[
+            {
+            'sex': 'female',
+            'age': 21,
+            'race': 'Latino'
             }
         ]
     }
@@ -30,7 +50,7 @@ def get_patientInfor(name):
     for patient in Patients:
         if patient['name'] == name:
             return jsonify(patient)
-        return 'Patient: {} not found in our patient\'s database'.format(name)
+    return 'Patient: {} not found in our patient\'s database'.format(name)
 
 
 @app.route('/patients')
