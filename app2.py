@@ -27,12 +27,15 @@ def add_patient():
 
 @app.route('/patient/<string:name>')
 def get_patientInfor(name):
-    pass
+    for patient in Patients:
+        if patient['name'] == name:
+            return jsonify(patient)
+        return 'Patient: {} not found in our patient\'s database'.format(name)
 
 
 @app.route('/patients')
 def get_allPatients():
-    pass
+    return jsonify({'All Patient': Patients})
 
 if __name__ == '__main__':
     app.debug = True
