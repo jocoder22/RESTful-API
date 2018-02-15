@@ -13,6 +13,6 @@ class User(object):
 
     def __init__(self, _id, username, password):
         """Initialize the class."""
-        self.id = user_id
+        self.id = _id
         self.username = username
         self.password = password
