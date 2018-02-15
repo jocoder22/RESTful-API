@@ -6,7 +6,7 @@ This is a RESTful API server that uses Python Fask-RESTful.
 ## Installation
 - Python
 - Flask
-- flask-RESTful
-- flask-jwt
+- Flask-RESTful
+- Flask-JWT
 ## Operating Instructions
 ## References
