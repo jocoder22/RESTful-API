@@ -18,8 +18,8 @@ class User(object):
         self.username = username
         self.password = password
 
-
-    def findUser(self, username):
+    @classmethod
+    def findUser(cls, username):
         """Find user using username in the database"""
         connection = sqlite3.connect('dataBase.db')
         cursor = connection.cursor()
@@ -28,7 +28,7 @@ class User(object):
         result = cursor.execute(query, (username,))
         row = result.fetchone()
         if row:
-            user = User(row[0], row[1], row[2])
+            user = cls(*row)
         else:
             user = None
         connection.close()
