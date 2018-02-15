@@ -3,12 +3,12 @@
 
 from flask import Flask, request
 from flask_restful import Resource, Api
-from flask_jwt import JWT
+from flask_jwt import JWT, jwt_required
 from security import authenticate, identity
 
 
 app = Flask(__name__)
-app.secret_key = 'josee'
+app.secret_key = 'bobby'
 api = Api(app)         # define our api
 
 jwt = JWT(app, authenticate, identity)
@@ -17,7 +17,12 @@ jwt = JWT(app, authenticate, identity)
    JWT creates a new endpoint '/auth',  whenever '/auth' is called with
    username  and password, the JWT extension extract the username and
    password and send them to our fucntion; authenticate and identity.
-   
+   The authenticate function compare the password and user  name with those
+   in out database.
+   The JWT generate and sends a token called Json Web Token, on the next
+   request, the client attaches this token with the request.
+   The JWT now uses the identity function to extract user id for identify
+   the correct user.
 '''
 
 Patients = []
@@ -36,6 +41,7 @@ class Patient(Resource):
     docstring for Patient Resource.
     """
 
+    @jwt_required()
     def get(self, name):
         """Define method on the resource i.e get."""
         patient = next(filter(lambda x: x['name'] == name, Patients), None)
