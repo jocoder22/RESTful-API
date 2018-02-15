@@ -2,7 +2,7 @@
 
 
 from flask import Flask, request
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 from flask_jwt import JWT, jwt_required
 from security import authenticate, identity
 
@@ -71,7 +71,11 @@ class Patient(Resource):
 
     def put(self, name):
         """Update the table."""
-        dataget = request.get_json()
+        parser = reqparse.RequestParser()
+        parser.add_argument('sex', required=True)
+        parser.add_argument('age', required=True)
+        parser.add_argument('race', required=True)
+        dataget = parser.parse_args()
         patient = next(filter(lambda x: x['name'] == name, Patients), None)
         if patient is None:
             patient = {
