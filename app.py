@@ -62,6 +62,29 @@ class Patient(Resource):
         Patients.append(patient)
         return patient, 201
 
+    def delete(self, name):
+        """Delete patient from the patient's database."""
+        global Patients
+        Patients = list(filter(lambda x: x['name'] != name, Patients))
+        return {'message': 'Patient: {} removed from the database'
+                .format(name)}
+
+    def put(self, name):
+        """Update the table."""
+        dataget = request.get_json()
+        patient = next(filter(lambda x: x['name'] == name, Patients), None)
+        if patient is None:
+            patient = {
+                        'name': name,
+                        'sex': dataget['sex'],
+                        'age': dataget['age'],
+                        'race': dataget['race']
+                        }
+            Patients.append(patient)
+        else:
+            patient.update(dataget)
+        return patient, 201
+
 
 class AllPatients(Resource):
     """List all patients in our database.
