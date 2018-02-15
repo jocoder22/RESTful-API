@@ -41,6 +41,11 @@ class Patient(Resource):
     docstring for Patient Resource.
     """
 
+    parser = reqparse.RequestParser()
+    parser.add_argument('sex', required=True, help="This item is required!")
+    parser.add_argument('age', required=True, help="This item is required!")
+    parser.add_argument('race', required=True, help="This item is required!")
+
     @jwt_required()
     def get(self, name):
         """Define method on the resource i.e get."""
@@ -52,7 +57,7 @@ class Patient(Resource):
         if next(filter(lambda x: x['name'] == name, Patients), None):
             return {'message': 'Patient with name {}, already in our database'
                     .format(name)},  400
-        dataInput = request.get_json()
+        dataInput = Patient.parser.parse_args()
         patient = {
                     'name': name,
                     'sex': dataInput['sex'],
@@ -71,11 +76,7 @@ class Patient(Resource):
 
     def put(self, name):
         """Update the table."""
-        parser = reqparse.RequestParser()
-        parser.add_argument('sex', required=True)
-        parser.add_argument('age', required=True)
-        parser.add_argument('race', required=True)
-        dataget = parser.parse_args()
+        dataget = Patient.parser.parse_args()
         patient = next(filter(lambda x: x['name'] == name, Patients), None)
         if patient is None:
             patient = {
