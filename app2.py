@@ -33,7 +33,7 @@ Patients = [
         'Biodata':[
             {
             'sex': 'female',
-            'age': 21,
+            'age': 22,
             'race': 'Latino'
             }
         ]
@@ -43,7 +43,20 @@ Patients = [
 
 @app.route('/patient', methods=['POST'])
 def add_patient():
-    pass
+    inputData = request.get_json()
+    new_data = {
+        'name': inputData['name'],
+        'Biodata':[
+            {
+            'sex': inputData['sex'],
+            'age': inputData['age'],
+            'race': inputData['race']
+            }
+        ]
+    }
+    Patients.append(new_data)
+    return jsonify(new_data)
+    # return jsonify({'All Patient': Patients})
 
 @app.route('/patient/<string:name>')
 def get_patientInfor(name):
@@ -56,6 +69,16 @@ def get_patientInfor(name):
 @app.route('/patients')
 def get_allPatients():
     return jsonify({'All Patient': Patients})
+
+
+@app.route('/patient/<string:name>/<string:Biodata>')
+def get_biodata(name, Biodata):
+    for patient in Patients:
+        if patient['name'] == name:
+            patientBiodata = patient['Biodata']
+            return jsonify({'Biodata': patientBiodata})
+    return 'Patient: {} not found in our patient\'s database'.format(name)
+
 
 if __name__ == '__main__':
     app.debug = True

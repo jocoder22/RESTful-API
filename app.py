@@ -21,7 +21,7 @@ class Patient(Resource):   # define the resource
 
     def post(self, name):
         patient = {
-                    'name': name,
+                    'name': 'Jemmy',
                     'sex': 'male',
                     'age': 54,
                     'race': 'black'
