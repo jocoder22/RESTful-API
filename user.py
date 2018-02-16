@@ -5,6 +5,8 @@ User's table.
 """
 
 import sqlite3
+from flask_restful import Resource, reqparse
+
 
 class User(object):
     """docstring for user.
@@ -18,36 +20,24 @@ class User(object):
         self.username = username
         self.password = password
 
-    @classmethod
-    def findUser(cls, username):
-        """Find user using username in the database"""
-        connection = sqlite3.connect('dataBase.db')
+
+class UserRegister(Resource):
+    """docstring for UserRegister."""
+
+    parser = reqparse.RequestParser()
+    parser.add_argument('username', required=True, type=str,
+                        help="This item is required!")
+    parser.add_argument('password', required=True, type=str,
+                        help="This item is required!")
+
+    def post(self):
+        """Post to register users."""
+        connection = sqlite3.connect("dataBase.db")
         cursor = connection.cursor()
-
-        query = "SELECT * FROM users WHERE username=?"
-        result = cursor.execute(query, (username,))
-        row = result.fetchone()
-        if row:
-            user = cls(*row)
-        else:
-            user = None
+        signInData = (UserRegister.parser.parse_args())
+        insertQuery2 = "INSERT INTO users VALUES(NULL, ?, ?)"
+        cursor.execute(insertQuery2, *signInData)
+        connection.commit()
         connection.close()
-        return user
 
-
-
-    @classmethod
-    def findUserId(cls, _id):
-        """Find user using user_id in the database"""
-        connection = sqlite3.connect('dataBase.db')
-        cursor = connection.cursor()
-
-        query = "SELECT * FROM users WHERE id=?"
-        result = cursor.execute(query, (_id,))
-        row = result.fetchone()
-        if row:
-            user = cls(*row)
-        else:
-            user = None
-        connection.close()
-        return user
+        return {"message": "user now created!"}, 201

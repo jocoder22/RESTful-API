@@ -4,7 +4,9 @@
 from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 from flask_jwt import JWT, jwt_required
+
 from security import authenticate, identity
+from user import UserRegister
 
 
 app = Flask(__name__)
@@ -42,9 +44,12 @@ class Patient(Resource):
     """
 
     parser = reqparse.RequestParser()
-    parser.add_argument('sex', required=True, help="This item is required!")
-    parser.add_argument('age', required=True, help="This item is required!")
-    parser.add_argument('race', required=True, help="This item is required!")
+    parser.add_argument('sex', required=True, type=str,
+                        help="This item is required!")
+    parser.add_argument('age', required=True, type=int,
+                        help="This item is required!")
+    parser.add_argument('race', required=True, type=str,
+                        help="This item is required!")
 
     @jwt_required()
     def get(self, name):
@@ -104,6 +109,7 @@ class AllPatients(Resource):
 
 api.add_resource(Patient, '/patient/<string:name>')
 api.add_resource(AllPatients, '/patients')
+api.add_resource(UserRegister, '/register')
 
 
 if __name__ == '__main__':

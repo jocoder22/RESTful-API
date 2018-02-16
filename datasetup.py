@@ -4,7 +4,7 @@ connection = sqlite3.connect("dataBase.db")
 
 cursor = connection.cursor()
 
-createTable = "CREATE TABLE users(id int, username text, password text)"
+createTable = "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username text, password text)"
 cursor.execute(createTable)
 
 user = (1, 'james', 'funny')
@@ -21,4 +21,4 @@ cursor.executemany(insertQuery, users)
 connection.commit()
 connection.close()
 
-print 'Done setting and updating database'
+print "Done setting and updating database"
