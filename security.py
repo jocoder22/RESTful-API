@@ -4,7 +4,7 @@ Create file for storing user info.
 """
 
 from werkzeug.security import safe_str_cmp
-from user import User
+from resources.user import User
 
 # users = [
 #     User(1, 'james', 'funny')
