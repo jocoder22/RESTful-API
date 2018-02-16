@@ -51,16 +51,12 @@ class Patient(Resource):
 
     def delete(self, name):
         """Delete patient from the patient's database."""
+
         if not PatientModel.findPatient(name):
             return {'message': 'Patient with name {}, not in our database'.format(name)},  404
 
-        connection = sqlite3.connect('dataBase.db')
-        cursor = connection.cursor()
-        deleteQuery = "DELETE FROM patients WHERE name=?"
-        cursor.execute(deleteQuery, (name,))
-
-        connection.commit()
-        connection.close()
+        patient = PatientModel.findPatient(name)
+        patient.deletePatient()
         return {'message': 'Patient: {} removed from the database'
                 .format(name)}
 
@@ -69,23 +65,21 @@ class Patient(Resource):
         dataget = Patient.parser.parse_args()
         patient = PatientModel.findPatient(name)
 
-        Updatedpatient = PatientModel(name,
-                                      dataget['sex'],
-                                      dataget['age'],
-                                      dataget['race']
-                                      )
         if patient is None:
-            try:
-                Updatedpatient.insertPatient()
-            except:
-                return {'message': 'Error with insertion'}, 500
-
+            patient = PatientModel(name,
+                                   dataget['sex'],
+                                   dataget['age'],
+                                   dataget['race']
+                                   )
         else:
-            try:
-                Updatedpatient.updatePatient()
-            except:
-                return {'message': 'Error with updating'}, 500
-        return Updatedpatient.json(), 201
+            patient.name = name
+            patient.sex = dataget['sex']
+            patient.age = dataget['age']
+            patient.race = dataget['race']
+
+        patient.insertPatient()
+
+        return patient.json(), 201
 
 
 class AllPatients(Resource):

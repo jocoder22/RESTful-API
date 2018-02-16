@@ -5,7 +5,6 @@ Models:
 
 """
 
-import sqlite3
 from db import db
 
 class PatientModel(db.Model):
@@ -38,33 +37,13 @@ class PatientModel(db.Model):
     @classmethod
     def findPatient(cls, name):
         """Define method on the resource i.e get."""
-        connection = sqlite3.connect('dataBase.db')
-        cursor = connection.cursor()
-
-        getQuery = "SELECT * FROM patients WHERE name=?"
-        result = cursor.execute(getQuery, (name,))
-        row = result.fetchone()
-        connection.close()
-
-        if row:
-            return cls(*row)
+        return cls.query.filter_by(name=name).first()
 
     def insertPatient(self):
-        """Insert into database."""
-        connection = sqlite3.connect('dataBase.db')
-        cursor = connection.cursor()
-        insertQuery = "INSERT INTO patients VALUES(?, ?, ?, ?)"
-        cursor.execute(insertQuery, (self.name, self.sex, self.age, self.race))
+        """Insert  and update the database."""
+        db.session.add(self)
+        db.session.commit()
 
-        connection.commit()
-        connection.close()
-
-    def updatePatient(self):
-        """Update database."""
-        connection = sqlite3.connect('dataBase.db')
-        cursor = connection.cursor()
-        updateQuery = "UPDATE patients SET name=?, sex=?, age=?, race=? WHERE name=?"
-        cursor.execute(updateQuery, (self.name, self.sex, self.age, self.race, self.name))
-
-        connection.commit()
-        connection.close()
+    def deletePatient(self):
+        db.session.delete(self)
+        db.session.commit()
