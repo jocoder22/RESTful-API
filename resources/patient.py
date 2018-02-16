@@ -144,7 +144,7 @@ class AllPatients(Resource):
 
         allPatients = []
 
-        if result:
+        if len(result):
             for row in result:
                 allPatients.append({'name': row[0], 'sex': row[1], 'age': row[2], 'race': row[3]})
 
