@@ -10,8 +10,8 @@ cursor.execute(TableUsers)
 TablePatients = "CREATE TABLE IF NOT EXISTS patients(name text, age int, sex text, race text)"
 cursor.execute(TablePatients)
 
-insertQuery3 = "INSERT INTO patients VALUES('Jemmy', 56, 'male', 'white')"
-cursor.execute(insertQuery3)
+# insertQuery3 = "INSERT INTO patients VALUES('Jemmy', 56, 'male', 'white')"
+# cursor.execute(insertQuery3)
 
 # user = (1, 'james', 'funny')
 # insertQuery = "INSERT INTO users VALUES(?, ?, ?)"

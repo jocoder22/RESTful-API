@@ -24,10 +24,16 @@ class Patient(Resource):
     parser.add_argument('race', required=True, type=str,
                         help="This item is required!")
 
-
-
     @jwt_required()
     def get(self, name):
+        """Define method on the resource i.e get."""
+        patient = Patient.findPatient(name)
+        if patient:
+            return patient, 200
+        return {'message': 'Patient {} not found in our patient\'s database'.format(name)}, 404
+
+    @classmethod
+    def findPatient(cls, name):
         """Define method on the resource i.e get."""
         connection = sqlite3.connect('dataBase.db')
         cursor = connection.cursor()
@@ -38,14 +44,13 @@ class Patient(Resource):
         connection.close()
 
         if row:
-            return {'Patient': {'name': row[0], 'age': row[1], 'sex': row[2], 'race': row[3]}}, 200
-        return {'message': 'Patient {} not found in our patient\'s database'.format(name)}, 404
+            return {'Patient': {'name': row[0], 'age': row[1], 'sex': row[2], 'race': row[3]}}
 
     def post(self, name):
         """Will post data to the database."""
-        if next(filter(lambda x: x['name'] == name, Patients), None):
-            return {'message': 'Patient with name {}, already in our database'
-                    .format(name)},  400
+        # if next(filter(lambda x: x['name'] == name, Patients), None):
+        if Patient.findPatient(name):
+            return {'message': 'Patient with name {}, already in our database'.format(name)},  400
         dataInput = Patient.parser.parse_args()
         patient = {
                     'name': name,
@@ -53,31 +58,72 @@ class Patient(Resource):
                     'age': dataInput['age'],
                     'race': dataInput['race']
                     }
-        Patients.append(patient)
+        try:
+            Patient.insertPatient(patient)
+        except:
+            return {'message': 'Error occured during insertion'}, 500
         return patient, 201
+
+    @classmethod
+    def insertPatient(cls, patient):
+        """Insert into database."""
+        connection = sqlite3.connect('dataBase.db')
+        cursor = connection.cursor()
+        insertQuery = "INSERT INTO patients VALUES(?, ?, ?, ?)"
+        cursor.execute(insertQuery, (patient['name'], patient['sex'], patient['age'], patient['race']))
+
+        connection.commit()
+        connection.close()
 
     def delete(self, name):
         """Delete patient from the patient's database."""
-        global Patients
-        Patients = list(filter(lambda x: x['name'] != name, Patients))
+        if not Patient.findPatient(name):
+            return {'message': 'Patient with name {}, not in our database'.format(name)},  404
+
+        connection = sqlite3.connect('dataBase.db')
+        cursor = connection.cursor()
+        deleteQuery = "DELETE FROM patients WHERE name=?"
+        cursor.execute(deleteQuery, (name,))
+
+        connection.commit()
+        connection.close()
         return {'message': 'Patient: {} removed from the database'
                 .format(name)}
 
     def put(self, name):
         """Update the table."""
         dataget = Patient.parser.parse_args()
-        patient = next(filter(lambda x: x['name'] == name, Patients), None)
+        patient = Patient.findPatient(name)
+
+        Updatedpatient = {
+                    'name': name,
+                    'sex': dataget['sex'],
+                    'age': dataget['age'],
+                    'race': dataget['race']
+                    }
         if patient is None:
-            patient = {
-                        'name': name,
-                        'sex': dataget['sex'],
-                        'age': dataget['age'],
-                        'race': dataget['race']
-                        }
-            Patients.append(patient)
+            try:
+                Patient.insertPatient(Updatedpatient)
+            except:
+                return {'message': 'Error with insertion'}, 500
+
         else:
-            patient.update(dataget)
-        return patient, 201
+            try:
+                Patient.updatePatient(Updatedpatient)
+            except:
+                return {'message': 'Error with updating'}, 500
+        return Updatedpatient, 201
+
+    @classmethod
+    def updatePatient(cls, patient):
+        """Update database."""
+        connection = sqlite3.connect('dataBase.db')
+        cursor = connection.cursor()
+        updateQuery = "UPDATE patients SET name=?, sex=?, age=?, race=? WHERE name=?"
+        cursor.execute(updateQuery, (patient['name'], patient['sex'], patient['age'], patient['race'], patient['name']))
+
+        connection.commit()
+        connection.close()
 
 
 class AllPatients(Resource):
@@ -88,4 +134,17 @@ class AllPatients(Resource):
 
     def get(self):
         """Return list of all patients."""
-        return {'Patients': Patients}
+        # return {'Patients': Patients}
+        connection = sqlite3.connect('dataBase.db')
+        cursor = connection.cursor()
+
+        getQuery = "SELECT * FROM patients"
+        result = cursor.execute(getQuery)
+        row = result.fetchall()
+        connection.close()
+
+        if row:
+            # return {'Patients': row}
+            # allUsers=[i.serialize for i in users],
+            return row
+        return {'message': 'Patient database is empty at this time!'}
