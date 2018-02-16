@@ -6,6 +6,7 @@ User's table.
 
 import sqlite3
 from flask_restful import Resource, reqparse
+from models.user import UserModel
 
 
 class UserRegister(Resource):
@@ -20,7 +21,7 @@ class UserRegister(Resource):
     def post(self):
         """Post to register users."""
         signInData = UserRegister.parser.parse_args()
-        if User.findUser(signInData['username']):
+        if UserModel.findUser(signInData['username']):
             return {'message': 'User {} already exist, choose another username'.format(signInData['username'])}, 400
 
         connection = sqlite3.connect("dataBase.db")

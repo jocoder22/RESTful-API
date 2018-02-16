@@ -4,7 +4,7 @@ Create file for storing user info.
 """
 
 from werkzeug.security import safe_str_cmp
-from resources.user import User
+from models.user import UserModel
 
 # users = [
 #     User(1, 'james', 'funny')
@@ -16,7 +16,7 @@ from resources.user import User
 
 def authenticate(username, password):
     # user1 = username_mapping.get(username, None)
-    user1 = User.findUser(username)
+    user1 = UserModel.findUser(username)
     if user1 and safe_str_cmp(user1.password, password):
         return user1
 
@@ -24,4 +24,4 @@ def authenticate(username, password):
 def identity(payload):
     user_id = payload['identity']
     # return userid_mapping.get(user_id, None)
-    return User.findUserId(user_id)
+    return UserModel.findUserId(user_id)
