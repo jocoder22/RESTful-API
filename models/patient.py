@@ -6,13 +6,23 @@ Models:
 """
 
 import sqlite3
+from db import db
 
-class PatientModel(object):
+class PatientModel(db.Model):
     """Docstring for PatientModel.
 
     Patient Model:
 
     """
+
+    __tablename = 'patients'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+    sex = db.Column(db.String(80))
+    age = db.Column(db.Integer(80))
+    race = db.Column(db.String(80))
+
 
     def __init__(self, name, sex , age, race):
         """Initialize the class."""
@@ -23,7 +33,7 @@ class PatientModel(object):
 
     def json(self):
         """Return json representation of our object"""
-        return {'name': self.name, 'sex': self.sex, 'age': self.age, 'race':self.race}
+        return {'name': self.name, 'sex': self.sex, 'age': self.age, 'race': self.race}
 
     @classmethod
     def findPatient(cls, name):

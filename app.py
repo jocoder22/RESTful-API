@@ -42,7 +42,10 @@ api.add_resource(Patient, '/patient/<string:name>')
 api.add_resource(AllPatients, '/patients')
 api.add_resource(UserRegister, '/register')
 
+"""Run this file on the same folder with datasetup.py"""
 
 if __name__ == '__main__':
+    from db import db
+    db.init_app(app)
     app.debug = True
     app.run(port=5002)

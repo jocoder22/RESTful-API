@@ -40,16 +40,14 @@ class Patient(Resource):
         if PatientModel.findPatient(name):
             return {'message': 'Patient with name {}, already in our database'.format(name)},  400
         dataInput = Patient.parser.parse_args()
-        patient = PatientModel(name,
-                               dataInput['sex'],
-                               dataInput['age'],
+        patient = PatientModel(name, dataInput['sex'], dataInput['age'],
                                dataInput['race']
                                )
         try:
             patient.insertPatient()
         except:
             return {'message': 'Error occured during insertion'}, 500
-        return patient, 201
+        return patient.json(), 201
 
     def delete(self, name):
         """Delete patient from the patient's database."""

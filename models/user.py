@@ -5,7 +5,16 @@ class UserModel(object):
     """docstring for user.
 
     user's table.
+
     """
+
+    __tablename = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80))
+    password = db.Column(db.String(80))
+
+
 
     def __init__(self, _id, username, password):
         """Initialize the class."""

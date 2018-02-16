@@ -28,3 +28,5 @@ connection.commit()
 connection.close()
 
 print("Done setting and updating database.")
+
+"""Run the file on the folder with app.py"""
