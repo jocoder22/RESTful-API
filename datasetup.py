@@ -2,13 +2,16 @@ import sqlite3
 """Import sqlite. """
 
 connection = sqlite3.connect("dataBase.db")
-
 cursor = connection.cursor()
 
-createTable = "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username text, password text)"
+TableUsers = "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username text, password text)"
+cursor.execute(TableUsers)
 
+TablePatients = "CREATE TABLE IF NOT EXISTS patients(name text, age int, sex text, race text)"
+cursor.execute(TablePatients)
 
-cursor.execute(createTable)
+insertQuery3 = "INSERT INTO patients VALUES('Jemmy', 56, 'male', 'white')"
+cursor.execute(insertQuery3)
 
 # user = (1, 'james', 'funny')
 # insertQuery = "INSERT INTO users VALUES(?, ?, ?)"
