@@ -140,11 +140,14 @@ class AllPatients(Resource):
 
         getQuery = "SELECT * FROM patients"
         result = cursor.execute(getQuery)
-        row = result.fetchall()
-        connection.close()
 
-        if row:
-            # return {'Patients': row}
-            # allUsers=[i.serialize for i in users],
-            return row
-        return {'message': 'Patient database is empty at this time!'}
+
+        allPatients = []
+
+        if result:
+            for row in result:
+                allPatients.append({'name': row[0], 'sex': row[1], 'age': row[2], 'race': row[3]})
+
+            return {'AllPatients': allPatients}, 200
+        connection.close()
+        return {'message': 'Patient database is empty at this time!'}, 201
