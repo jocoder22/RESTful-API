@@ -24,12 +24,16 @@ class UserRegister(Resource):
         if UserModel.findUser(signInData['username']):
             return {'message': 'User {} already exist, choose another username'.format(signInData['username'])}, 400
 
-        connection = sqlite3.connect("dataBase.db")
-        cursor = connection.cursor()
-        insertQuery2 = "INSERT INTO users VALUES(NULL, ?, ?)"
-        cursor.execute(insertQuery2, (signInData['username'],
-                                      signInData['password']))
-        connection.commit()
-        connection.close()
+        # user = UserModel(signInData['username'],
+        #                               signInData['password']))
+        user = UserModel(**signInData)
+        user.saveData()
+        # connection = sqlite3.connect("dataBase.db")
+        # cursor = connection.cursor()
+        # insertQuery2 = "INSERT INTO users VALUES(NULL, ?, ?)"
+        # cursor.execute(insertQuery2, (signInData['username'],
+        #                               signInData['password']))
+        # connection.commit()
+        # connection.close()
 
         return {"message": "user now created!"}, 201

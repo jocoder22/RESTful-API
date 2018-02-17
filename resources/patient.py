@@ -5,7 +5,6 @@ Resources:
 
 """
 
-import sqlite3
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
 
@@ -36,7 +35,6 @@ class Patient(Resource):
 
     def post(self, name):
         """Will post data to the database."""
-        # if next(filter(lambda x: x['name'] == name, Patients), None):
         if PatientModel.findPatient(name):
             return {'message': 'Patient with name {}, already in our database'.format(name)},  400
         dataInput = Patient.parser.parse_args()
@@ -51,14 +49,19 @@ class Patient(Resource):
 
     def delete(self, name):
         """Delete patient from the patient's database."""
-
-        if not PatientModel.findPatient(name):
-            return {'message': 'Patient with name {}, not in our database'.format(name)},  404
-
         patient = PatientModel.findPatient(name)
-        patient.deletePatient()
-        return {'message': 'Patient: {} removed from the database'
-                .format(name)}
+        if patient:
+            patient.deletePatient()
+            return {'message': 'Patient: {} removed from the database'
+                    .format(name)}, 200
+        return {'message': 'Patient with name {}, not in our database'.format(name)},  404
+        # if not PatientModel.findPatient(name):
+        #     return {'message': 'Patient with name {}, not in our database'.format(name)},  404
+        #
+        # patient = PatientModel.findPatient(name)
+        # patient.deletePatient()
+        # return {'message': 'Patient: {} removed from the database'
+        #         .format(name)}
 
     def put(self, name):
         """Update the table."""
@@ -90,19 +93,10 @@ class AllPatients(Resource):
 
     def get(self):
         """Return list of all patients."""
-        # return {'Patients': Patients}
-        connection = sqlite3.connect('dataBase.db')
-        cursor = connection.cursor()
+        allPatients = [patient.json() for patient in PatientModel.query.all()]
 
-        getQuery = "SELECT * FROM patients"
-        result = cursor.execute(getQuery)
+        # allPatients = list(map(lambda patient: patient.json(), PatientModel.query.all()))
 
-        allPatients = []
-
-        if len(result):
-            for row in result:
-                allPatients.append({'name': row[0], 'sex': row[1], 'age': row[2], 'race': row[3]})
-
+        if len(allPatients):
             return {'AllPatients': allPatients}, 200
-        connection.close()
-        return {'message': 'Patient database is empty at this time!'}, 201
+        return {'message': 'Patient database is empty at this time!'}, 404

@@ -1,3 +1,5 @@
+"""Import sqlite3."""
+
 import sqlite3
 from db import db
 
@@ -9,50 +11,28 @@ class UserModel(db.Model):
 
     """
 
-    __tablename = 'users'
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80))
     password = db.Column(db.String(80))
 
-
-
-    def __init__(self, _id, username, password):
+    def __init__(self, username, password):
         """Initialize the class."""
-        self.id = _id
         self.username = username
         self.password = password
+
+    def saveData(self):
+        """Save data to database."""
+        db.session.add(self)
+        db.session.commit()
 
     @classmethod
     def findUser(cls, username):
         """Find user."""
-        connection = sqlite3.connect('dataBase.db')
-        cursor = connection.cursor()
-
-        selectQuery = "SELECT * FROM users WHERE username=?"
-        result = cursor.execute(selectQuery, (username,))
-        row = result.fetchone()
-        if row:
-            user = cls(*row)
-        else:
-            user = None
-
-        connection.close()
-        return user
+        return cls.query.filter_by(username=username).first()
 
     @classmethod
     def findUserId(cls, _id):
         """Find user using id."""
-        connection = sqlite3.connect('dataBase.db')
-        cursor = connection.cursor()
-
-        selectQuery = "SELECT * FROM users WHERE id=?"
-        result = cursor.execute(selectQuery, (_id,))
-        row = result.fetchone()
-        if row:
-            user = cls(*row)
-        else:
-            user = None
-
-        connection.close
-        return user
+        return cls.query.filter_by(id=_id).first()

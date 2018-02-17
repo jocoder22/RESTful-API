@@ -11,12 +11,18 @@ from resources.patient import Patient, AllPatients
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dataBase.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dataBase3.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'bobby'
 api = Api(app)         # define our api
 
 jwt = JWT(app, authenticate, identity)
+
+
+@app.before_first_request
+def createTables():
+    """Crates table before the first request."""
+    db.create_all()
 
 '''
    JWT creates a new endpoint '/auth',  whenever '/auth' is called with
@@ -29,8 +35,6 @@ jwt = JWT(app, authenticate, identity)
    The JWT now uses the identity function to extract user id for identify
    the correct user.
 '''
-
-# Patients = []
 
 # this add the resource to our api and
 # define how to access the resource on our api

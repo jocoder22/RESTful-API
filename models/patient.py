@@ -15,7 +15,7 @@ class PatientModel(db.Model):
 
     """
 
-    __tablename = 'patients'
+    __tablename__ = 'patients'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))

@@ -1,85 +1,52 @@
 """This is the Python app in Virtual Environment."""
 
 
-from flask import Flask, jsonify, request
+from flask import Flask
+from flask_restful import Api
+from flask_jwt import JWT
+
+from security import authenticate, identity
+from resources.user import UserRegister
+from resources.patient import Patient, AllPatients
+
 
 app = Flask(__name__)
-Patients = [
-    {
-        'name': 'James',
-        'Biodata': [
-            {
-             'sex': 'male',
-             'age': 44,
-             'race': 'black'
-            }
-        ]
-    },
-    {
-        'name': 'John',
-        'Biodata': [
-            {
-             'sex': 'male',
-             'age': 30,
-             'race': 'White'
-            }
-        ]
-    },
-    {
-        'name': 'Jane',
-        'Biodata': [
-            {
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = 'bobby'
+api = Api(app)         # define our api
 
-             'sex': 'female',
-             'age': 22,
-             'race': 'Latino'
-            }
-        ]
-    }
-]
+jwt = JWT(app, authenticate, identity)
+
+'''
+   JWT creates a new endpoint '/auth',  whenever '/auth' is called with
+   username  and password, the JWT extension extract the username and
+   password and send them to our fucntion; authenticate and identity.
+   The authenticate function compare the password and user  name with those
+   in out database.
+   The JWT generate and sends a token called Json Web Token, on the next
+   request, the client attaches this token with the request.
+   The JWT now uses the identity function to extract user id for identify
+   the correct user.
+'''
+
+# Patients = []
+
+# this add the resource to our api and
+# define how to access the resource on our api
+# to get info we use add_resource method below
+# just like calling: http://127.0.0.1:5000/patient/Peter
+# without the use of @app.route decorator
+# no need to jsonify 'cos flask_restful does that for us
 
 
-@app.route('/patient', methods=['POST'])
-def add_patient():
-    inputData = request.get_json()
-    new_data = {
-        'name': inputData['name'],
-        'Biodata': [
-            {
-             'sex': inputData['sex'],
-             'age': inputData['age'],
-             'race': inputData['race']
-            }
-        ]
-    }
-    Patients.append(new_data)
-    return jsonify(new_data)
-    # return jsonify({'All Patient': Patients})
+api.add_resource(Patient, '/patient/<string:name>')
+api.add_resource(AllPatients, '/patients')
+api.add_resource(UserRegister, '/register')
 
-
-@app.route('/patient/<string:name>')
-def get_patientInfor(name):
-    for patient in Patients:
-        if patient['name'] == name:
-            return jsonify(patient)
-    return 'Patient: {} not found in our patient\'s database'.format(name)
-
-
-@app.route('/patients')
-def get_allPatients():
-    return jsonify({'All Patient': Patients})
-
-
-@app.route('/patient/<string:name>/<string:Biodata>')
-def get_biodata(name, Biodata):
-    for patient in Patients:
-        if patient['name'] == name:
-            patientBiodata = patient['Biodata']
-            return jsonify({'Biodata': patientBiodata})
-    return 'Patient: {} not found in our patient\'s database'.format(name)
-
-
+"""Run this file on the same folder with datasetup.py"""
 
 if __name__ == '__main__':
+    from db import db
+    db.init_app(app)
     app.debug = True
-    app.run(port=5000)
+    app.run(port=5002)
