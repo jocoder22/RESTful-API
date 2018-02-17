@@ -4,7 +4,6 @@ Create a table to store user's info.
 User's table.
 """
 
-import sqlite3
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 
@@ -28,12 +27,5 @@ class UserRegister(Resource):
         #                               signInData['password']))
         user = UserModel(**signInData)
         user.saveData()
-        # connection = sqlite3.connect("dataBase.db")
-        # cursor = connection.cursor()
-        # insertQuery2 = "INSERT INTO users VALUES(NULL, ?, ?)"
-        # cursor.execute(insertQuery2, (signInData['username'],
-        #                               signInData['password']))
-        # connection.commit()
-        # connection.close()
 
         return {"message": "user now created!"}, 201

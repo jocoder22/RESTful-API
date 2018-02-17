@@ -1,4 +1,5 @@
 """Import db."""
+
 import sqlite3
 from db import db
 

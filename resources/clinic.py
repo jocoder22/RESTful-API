@@ -5,6 +5,7 @@ Resources:
 
 """
 
+from flask_jwt import jwt_required
 from flask_restful import Resource, reqparse
 from models.clinic import ClinicModel
 
@@ -33,6 +34,7 @@ class Clinic(Resource):
             return clinic.json()
         return {'message': 'clinic {} not found in our clinic\'s database'.format(name)}, 404
 
+    @jwt_required()
     def post(self, name):
         """Will post data to the database."""
         if ClinicModel.findClinic(name):
@@ -46,6 +48,7 @@ class Clinic(Resource):
             return {'message': 'Error occured during insertion'}, 500
         return clinic.json(), 201
 
+    @jwt_required()
     def delete(self, name):
         """Delete patient from the patient's database."""
         clinic = ClinicModel.findClinic(name)
@@ -55,6 +58,7 @@ class Clinic(Resource):
                     .format(name)}, 200
         return {'message': 'clinic with name {}, not in our database'.format(name)},  404
 
+    @jwt_required()
     def put(self, name):
         """Update the table."""
         clinic = Clinic.parser.parse_args()

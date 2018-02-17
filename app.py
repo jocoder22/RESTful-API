@@ -17,13 +17,14 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'bobby'
 api = Api(app)         # define our api
 
-jwt = JWT(app, authenticate, identity)
-
 
 @app.before_first_request
-def createTables():
+def create_tables():
     """Create table before the first request."""
     db.create_all()
+
+
+jwt = JWT(app, authenticate, identity)
 
 
 '''

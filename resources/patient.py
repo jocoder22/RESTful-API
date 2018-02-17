@@ -7,7 +7,6 @@ Resources:
 
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
-
 from models.patient import PatientModel
 
 
@@ -19,7 +18,7 @@ class Patient(Resource):
 
     parser = reqparse.RequestParser()
     parser.add_argument('sex', required=True, type=str,
-                        help="This item is required!")
+                        help="This item is required! oooo")
     parser.add_argument('age', required=True, type=int,
                         help="This item is required!")
     parser.add_argument('race', required=True, type=str,
@@ -27,7 +26,6 @@ class Patient(Resource):
     parser.add_argument('clinic_id', required=True, type=int,
                         help="This item is required!")
 
-    @jwt_required()
     def get(self, name):
         """Define method on the resource i.e get."""
         patient = PatientModel.findPatient(name)
@@ -35,12 +33,16 @@ class Patient(Resource):
             return patient.json(), 200
         return {'message': 'Patient {} not found in our patient\'s database'.format(name)}, 404
 
+    @jwt_required()
     def post(self, name):
         """Will post data to the database."""
         if PatientModel.findPatient(name):
             return {'message': 'Patient with name {}, already in our database'.format(name)},  400
         dataInput = Patient.parser.parse_args()
-        patient = PatientModel(name, **dataInput)
+        patient = PatientModel(name, dataInput['sex'],
+                               dataInput['age'],
+                               dataInput['race'],
+                               dataInput['clinic_id'])
 
         try:
             patient.insertPatient()
@@ -48,6 +50,7 @@ class Patient(Resource):
             return {'message': 'Error occured during insertion'}, 500
         return patient.json(), 201
 
+    @jwt_required()
     def delete(self, name):
         """Delete patient from the patient's database."""
         patient = PatientModel.findPatient(name)
@@ -57,13 +60,17 @@ class Patient(Resource):
                     .format(name)}, 200
         return {'message': 'Patient with name {}, not in our database'.format(name)},  404
 
+    @jwt_required()
     def put(self, name):
         """Update the table."""
         dataget = Patient.parser.parse_args()
         patient = PatientModel.findPatient(name)
 
         if patient is None:
-            patient = PatientModel(name, **dataget)
+            patient = PatientModel(name, dataget['sex'],
+                                   dataget['age'],
+                                   dataget['race'],
+                                   dataget['clinic_id'])
         else:
             patient.name = name
             patient.sex = dataget['sex']
