@@ -23,6 +23,8 @@ class Patient(Resource):
     parser.add_argument('age', required=True, type=int,
                         help="This item is required!")
     parser.add_argument('race', required=True, type=str,
+                        help="Clinic id required!")
+    parser.add_argument('clinic_id', required=True, type=int,
                         help="This item is required!")
 
     @jwt_required()
@@ -38,9 +40,8 @@ class Patient(Resource):
         if PatientModel.findPatient(name):
             return {'message': 'Patient with name {}, already in our database'.format(name)},  400
         dataInput = Patient.parser.parse_args()
-        patient = PatientModel(name, dataInput['sex'], dataInput['age'],
-                               dataInput['race']
-                               )
+        patient = PatientModel(name, **dataInput)
+
         try:
             patient.insertPatient()
         except:
@@ -55,13 +56,6 @@ class Patient(Resource):
             return {'message': 'Patient: {} removed from the database'
                     .format(name)}, 200
         return {'message': 'Patient with name {}, not in our database'.format(name)},  404
-        # if not PatientModel.findPatient(name):
-        #     return {'message': 'Patient with name {}, not in our database'.format(name)},  404
-        #
-        # patient = PatientModel.findPatient(name)
-        # patient.deletePatient()
-        # return {'message': 'Patient: {} removed from the database'
-        #         .format(name)}
 
     def put(self, name):
         """Update the table."""
@@ -69,16 +63,13 @@ class Patient(Resource):
         patient = PatientModel.findPatient(name)
 
         if patient is None:
-            patient = PatientModel(name,
-                                   dataget['sex'],
-                                   dataget['age'],
-                                   dataget['race']
-                                   )
+            patient = PatientModel(name, **dataget)
         else:
             patient.name = name
             patient.sex = dataget['sex']
             patient.age = dataget['age']
             patient.race = dataget['race']
+            patient.clinic_id = dataget['clinic_id']
 
         patient.insertPatient()
 

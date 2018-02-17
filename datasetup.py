@@ -1,7 +1,7 @@
 import sqlite3
 """Import sqlite. """
 
-connection = sqlite3.connect("dataBase3.db")
+connection = sqlite3.connect("dataBase.db")
 cursor = connection.cursor()
 
 TableUsers = "CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username text, password text)"

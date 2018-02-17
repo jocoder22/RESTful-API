@@ -23,12 +23,16 @@ class PatientModel(db.Model):
     age = db.Column(db.Integer)
     race = db.Column(db.String(80))
 
-    def __init__(self, name, sex, age, race):
+    clinic_id = db.Column(db.Integer, db.ForeignKey('clinics.id'))
+    clinic = db.relationship('ClinicModel')
+
+    def __init__(self, name, sex, age, race, clinic_id):
         """Initialize the class."""
         self.name = name
         self.sex = sex
         self.age = age
         self.race = race
+        self.clinic_id = clinic_id
 
     def json(self):
         """Return json representation of our object."""

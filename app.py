@@ -8,10 +8,11 @@ from flask_jwt import JWT
 from security import authenticate, identity
 from resources.user import UserRegister
 from resources.patient import Patient, AllPatients
+from resources.clinic import Clinic, ClinicList
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dataBase3.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dataBase.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'bobby'
 api = Api(app)         # define our api
@@ -21,8 +22,9 @@ jwt = JWT(app, authenticate, identity)
 
 @app.before_first_request
 def createTables():
-    """Crates table before the first request."""
+    """Create table before the first request."""
     db.create_all()
+
 
 '''
    JWT creates a new endpoint '/auth',  whenever '/auth' is called with
@@ -45,7 +47,9 @@ def createTables():
 
 
 api.add_resource(Patient, '/patient/<string:name>')
+api.add_resource(Clinic, '/clinic/<string:name>')
 api.add_resource(AllPatients, '/patients')
+api.add_resource(ClinicList, '/clinics')
 api.add_resource(UserRegister, '/register')
 
 """Run this file on the same folder with datasetup.py"""
