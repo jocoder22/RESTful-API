@@ -1,7 +1,8 @@
 import sqlite3
+from db import db
 
 
-class UserModel(object):
+class UserModel(db.Model):
     """docstring for user.
 
     user's table.

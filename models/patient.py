@@ -7,6 +7,7 @@ Models:
 
 from db import db
 
+
 class PatientModel(db.Model):
     """Docstring for PatientModel.
 
@@ -19,11 +20,10 @@ class PatientModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     sex = db.Column(db.String(80))
-    age = db.Column(db.Integer(80))
+    age = db.Column(db.Integer)
     race = db.Column(db.String(80))
 
-
-    def __init__(self, name, sex , age, race):
+    def __init__(self, name, sex, age, race):
         """Initialize the class."""
         self.name = name
         self.sex = sex
@@ -31,8 +31,9 @@ class PatientModel(db.Model):
         self.race = race
 
     def json(self):
-        """Return json representation of our object"""
-        return {'name': self.name, 'sex': self.sex, 'age': self.age, 'race': self.race}
+        """Return json representation of our object."""
+        return {'name': self.name, 'sex': self.sex, 'age': self.age,
+                'race': self.race}
 
     @classmethod
     def findPatient(cls, name):
@@ -45,5 +46,6 @@ class PatientModel(db.Model):
         db.session.commit()
 
     def deletePatient(self):
+        """Will delete patient."""
         db.session.delete(self)
         db.session.commit()
