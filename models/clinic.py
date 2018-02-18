@@ -4,7 +4,7 @@ This is the file for out clinic model.
 Clinic:
 
 """
-import sqlite3
+# import sqlite3
 from db import db
 
 

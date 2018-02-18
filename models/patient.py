@@ -4,7 +4,7 @@ This is the file for out patient model.
 Models:
 
 """
-import sqlite3
+
 from db import db
 
 

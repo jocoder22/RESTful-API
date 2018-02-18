@@ -23,8 +23,8 @@ class Clinic(Resource):
     #                     help="This item is required!")
     # parser.add_argument('race', required=True, type=str,
     #                     help="Clinic id required!")
-    parser.add_argument('clinic_id', required=True, type=int,
-                        help="This item is required!")
+    # parser.add_argument('clinic_id', required=True, type=int,
+    #                     help="This item is required!")
 
     @jwt_required()
     def get(self, name):
@@ -40,7 +40,7 @@ class Clinic(Resource):
         if ClinicModel.findClinic(name):
             return {'message': 'clinic with name {}, already in our database'.format(name)},  400
         dataInput = Clinic.parser.parse_args()
-        clinic = ClinicModel(name, **dataInput)
+        clinic = ClinicModel(dataInput['name'])
 
         try:
             clinic.insertClinic()
@@ -65,7 +65,7 @@ class Clinic(Resource):
         clinic = ClinicModel.findClinic(name)
 
         if clinic is None:
-            clinic = ClinicModel(name, **dataget)
+            clinic = ClinicModel(dataget['name'])
         else:
             clinic.name = name
 

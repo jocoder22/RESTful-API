@@ -3,7 +3,7 @@ Create a table to store user's info.
 
 User's table.
 """
-
+import sqlite3
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 
@@ -28,4 +28,4 @@ class UserRegister(Resource):
         user = UserModel(**signInData)
         user.saveData()
 
-        return {"message": "user now created!"}, 201
+        return {'message': 'user {}, now created!'.format(signInData['username'])}, 201

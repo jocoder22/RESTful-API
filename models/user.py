@@ -29,7 +29,7 @@ class UserModel(db.Model):
 
     @classmethod
     def findUser(cls, username):
-        """Find user."""
+        """Find user using uername."""
         return cls.query.filter_by(username=username).first()
 
     @classmethod
